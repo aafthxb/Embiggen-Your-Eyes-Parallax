@@ -139,13 +139,15 @@ const Index = () => {
             </Button>
           </Link>
 
-          <Button 
-            size="lg" 
-            className="glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-secondary/40 hover:border-secondary/60 bg-secondary/10 hover:bg-secondary/20 text-foreground font-semibold"
-          >
-            <Telescope className="mr-3 h-6 w-6" />
-            Space Gallery
-          </Button>
+          <Link to="/space-gallery">
+            <Button 
+              size="lg" 
+              className="glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-secondary/40 hover:border-secondary/60 bg-secondary/10 hover:bg-secondary/20 text-foreground font-semibold"
+            >
+              <Telescope className="mr-3 h-6 w-6" />
+              Space Gallery
+            </Button>
+          </Link>
         </div>
 
         <p className="mt-8 text-muted-foreground text-sm">
