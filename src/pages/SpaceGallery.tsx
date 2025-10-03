@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ArrowLeft, ZoomIn, ZoomOut, RotateCcw, Info, Search, X } from "lucide-react";
+import { useState, useRef } from "react";
+import { ArrowLeft, ZoomIn, ZoomOut, RotateCcw, Info, Search, X, Dice6 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -72,6 +72,8 @@ const SpaceGallery = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [searchQuery, setSearchQuery] = useState("");
+  const [showGallery, setShowGallery] = useState(true);
+  const galleryRef = useRef<HTMLDivElement>(null);
 
   const getImageUrl = (image: GalleryImage) => {
     if (zoom <= 1.5) return image.lowQuality;
@@ -130,6 +132,11 @@ const SpaceGallery = () => {
     setPan({ x: 0, y: 0 });
   };
 
+  const handleSearch = () => {
+    setShowGallery(true);
+    galleryRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const filteredImages = galleryImages.filter(
     (image) =>
       image.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -137,7 +144,8 @@ const SpaceGallery = () => {
   );
 
   return (
-    <div className="min-h-screen space-gradient relative overflow-hidden">
+    <div className="min-h-screen space-gradient relative">
+      <style dangerouslySetInnerHTML={{ __html: `::-webkit-scrollbar { display: none; } body { scrollbar-width: none; }` }} />
       {/* Animated stars background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(100)].map((_, i) => (
@@ -160,80 +168,104 @@ const SpaceGallery = () => {
       {/* Main content */}
       <div className="relative z-10 min-h-screen">
         {/* Header with search */}
-        <header className="container mx-auto px-4 py-8">
-          <Link to="/">
-            <Button variant="ghost" className="mb-8 text-foreground hover:text-primary">
-              <ArrowLeft className="mr-2 h-5 w-5" />
-              Back to Home
-            </Button>
-          </Link>
+        <header className="container mx-auto px-4 min-h-screen flex flex-col justify-center">
+          <div className="absolute top-4 left-4">
+            <Link to="/">
+              <Button variant="ghost" className="text-foreground hover:text-primary">
+                <ArrowLeft className="mr-2 h-5 w-5" />
+                Back to Home
+              </Button>
+            </Link>
+          </div>
 
-          <div className="max-w-2xl mx-auto text-center mb-12">
+          <div className="max-w-2xl mx-auto text-center">
             <h1 className="text-5xl font-bold mb-6 gradient-text">Space Gallery</h1>
             <p className="text-muted-foreground mb-8">Explore stunning images from NASA's database</p>
-            
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search space images..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 pr-12 py-6 text-lg glass-panel border-primary/20 focus:border-primary"
-              />
-              {searchQuery && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-2 top-1/2 -translate-y-1/2"
-                >
-                  <X className="h-5 w-5" />
-                </Button>
-              )}
+
+            <div className="flex items-center gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search space images..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
+                  className="pl-12 pr-12 py-6 text-lg glass-panel border-primary/20 focus:border-primary"
+                />
+                {searchQuery && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-2 top-1/2 -translate-y-1/2"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                )}
+              </div>
+              <Button
+                variant="outline"
+                className="h-14 w-14 glass-panel border-primary/20 hover:border-primary"
+                onClick={handleSearch}
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="outline"
+                className="h-14 w-14 glass-panel border-primary/20 hover:border-primary"
+                onClick={() => {
+                  const randomImage = galleryImages[Math.floor(Math.random() * galleryImages.length)];
+                  handleImageSelect(randomImage);
+                }}
+              >
+                <Dice6 className="h-5 w-5" />
+              </Button>
             </div>
           </div>
         </header>
 
         {/* Gallery Grid */}
-        <div className="container mx-auto px-4 pb-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredImages.map((image) => (
-              <Card
-                key={image.id}
-                onClick={() => handleImageSelect(image)}
-                className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-xl overflow-hidden group"
-              >
-                <div className="relative">
-                  <img
-                    src={image.lowQuality}
-                    alt={image.title}
-                    className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    <h3 className="font-semibold text-lg mb-1">{image.title}</h3>
-                    <p className="text-sm text-white/90 line-clamp-2">{image.description}</p>
+        {showGallery && (
+          <div ref={galleryRef} className="container mx-auto px-4 pb-16 mt-32">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredImages.map((image) => (
+                <Card
+                  key={image.id}
+                  onClick={() => handleImageSelect(image)}
+                  className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-xl overflow-hidden group"
+                >
+                  <div className="relative">
+                    <img
+                      src={image.lowQuality}
+                      alt={image.title}
+                      className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      <h3 className="font-semibold text-lg mb-1">{image.title}</h3>
+                      <p className="text-sm text-white/90 line-clamp-2">{image.description}</p>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-          
-          {filteredImages.length === 0 && (
-            <div className="text-center py-16">
-              <div className="text-6xl mb-4">🔍</div>
-              <h2 className="text-2xl font-bold mb-2">No images found</h2>
-              <p className="text-muted-foreground">Try a different search term</p>
+                </Card>
+              ))}
             </div>
-          )}
-        </div>
+
+            {filteredImages.length === 0 && (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">🔍</div>
+                <h2 className="text-2xl font-bold mb-2">No images found</h2>
+                <p className="text-muted-foreground">Try a different search term</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Image Viewer Modal */}
       {selectedImage && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center">
-          <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-white">{selectedImage.title}</h2>
               <p className="text-sm text-white/70 mt-1">
@@ -276,7 +308,8 @@ const SpaceGallery = () => {
           </div>
 
           <div
-            className="w-full h-full cursor-move"
+            className="w-full h-full"
+            style={{ cursor: zoom > 1 ? 'move' : 'default' }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
