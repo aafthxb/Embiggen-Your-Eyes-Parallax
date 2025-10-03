@@ -145,6 +145,7 @@ const SpaceGallery = () => {
 
   return (
     <div className="min-h-screen space-gradient relative">
+      <style dangerouslySetInnerHTML={{ __html: `::-webkit-scrollbar { display: none; } body { scrollbar-width: none; }` }} />
       {/* Animated stars background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(100)].map((_, i) => (
@@ -189,6 +190,7 @@ const SpaceGallery = () => {
                   placeholder="Search space images..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
                   className="pl-12 pr-12 py-6 text-lg glass-panel border-primary/20 focus:border-primary"
                 />
                 {searchQuery && (
