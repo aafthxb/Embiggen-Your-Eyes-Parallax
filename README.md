@@ -38,7 +38,7 @@ Start the development server:
 ```bash
 npm run dev
 ```
-Open the link provided in the terminal (usually http://localhost:3000) in your web browser.
+Open the link provided in the terminal (usually http://localhost:8080) in your web browser.
 
 Voila! The website is now running locally on your PC.
 
@@ -46,3 +46,4 @@ Voila! The website is now running locally on your PC.
 This project is a submission for the NASA Space Apps Hackathon 2025, created for the "Embiggen Your Eyes" challenge.
 
 Please note: As this project relies on live data from NASA's APIs, some features might take a moment to load, and there may be occasional issues if the databases are temporarily unavailable.
+
