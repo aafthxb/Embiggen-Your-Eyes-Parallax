@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceZoom Explorer - Embiggen Your Eyes!</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #000; color: #fff; }
+        header { background: linear-gradient(#001122, #000); padding: 20px; text-align: center; }
+        #search { width: 80%; padding: 10px; margin: 10px; border: none; border-radius: 5px; }
+        #gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; padding: 20px; }
+        .thumbnail { cursor: pointer; border-radius: 5px; overflow: hidden; transition: transform 0.2s; }
+        .thumbnail:hover { transform: scale(1.05); }
+        .thumbnail img { width: 100%; height: auto; }
+        #viewer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; z-index: 1000; }
+        #map { height: 100%; width: 100%; }
+        #sidebar { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 5px; width: 200px; }
+        #close { position: absolute; top: 10px; right: 10px; color: #fff; font-size: 24px; cursor: pointer; }
+        #notes { margin-top: 10px; }
+        #notes textarea { width: 100%; height: 60px; background: #333; color: #fff; border: none; border-radius: 3px; }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <header>
+        <h1>SpaceZoom Explorer</h1>
+        <p>Embiggen Your Eyes! Dive into NASA's high-res space imagery.</p>
+        <input type="text" id="search" placeholder="Search e.g., 'Mars rover' or 'nebula'" />
+        <button onclick="searchImages()">Explore</button>
+    </header>
+    <div id="gallery"></div>
+
+    <div id="viewer">
+        <div id="close" onclick="closeViewer()">×</div>
+        <div id="map"></div>
+        <div id="sidebar">
+            <h3 id="title"></h3>
+            <p id="description"></p>
+            <div id="notes">
+                <label>Add Note:</label><br>
+                <textarea id="noteInput" placeholder="e.g., 'Look at that crater!'"></textarea>
+                <button onclick="addNote()">Save Note</button>
+            </div>
+            <button onclick="shareImage()">Share View</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map, markers = [];
+        const API_URL = 'https://images-api.nasa.gov/search';
+
+        async function searchImages() {
+            const query = document.getElementById('search').value || 'space';
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = '<p>Loading...</p>';
+
+            try {
+                const response = await fetch(`${API_URL}?q=${encodeURIComponent(query)}&media_type=image`);
+                const data = await response.json();
+                const items = data.collection?.items || [];
+                gallery.innerHTML = '';
+
+                items.slice(0, 20).forEach(item => {  // Limit to 20 for performance
+                    const div = document.createElement('div');
+                    div.className = 'thumbnail';
+                    div.innerHTML = `<img src="${item.links[0]?.href || ''}" alt="${item.data[0]?.title}" onclick="openViewer('${item.links[0]?.href}', '${item.data[0]?.title}', '${item.data[0]?.description}')">`;
+                    gallery.appendChild(div);
+                });
+            } catch (error) {
+                gallery.innerHTML = '<p>Error loading images. Try again!</p>';
+            }
+        }
+
+        function openViewer(imgUrl, title, desc) {
+            document.getElementById('viewer').style.display = 'block';
+            document.getElementById('title').textContent = title;
+            document.getElementById('description').textContent = desc.substring(0, 200) + '...';
+
+            // Create Leaflet map for zoomable image
+            const viewer = document.getElementById('map');
+            if (map) map.remove();
+            map = L.map('map').setView([0, 0], 1);
+            L.imageOverlay(imgUrl, [[0, 0], [1, 1]]).addTo(map);
+            map.setMaxZoom(10);  // Adjust based on image res
+            map.dragging.enable();
+            map.touchZoom.enable();
+            map.doubleClickZoom.enable();
+            map.scrollWheelZoom.enable();
+        }
+
+        function closeViewer() {
+            document.getElementById('viewer').style.display = 'none';
+            if (map) map.remove();
+        }
+
+        function addNote() {
+            const note = document.getElementById('noteInput').value;
+            if (note) {
+                alert('Note saved: ' + note);  // In production, store in localStorage or DB
+                document.getElementById('noteInput').value = '';
+            }
+        }
+
+        function shareImage() {
+            if (navigator.share) {
+                navigator.share({ title: document.getElementById('title').textContent, url: window.location.href });
+            } else {
+                prompt('Share this link:', window.location.href);
+            }
+        }
+
+        // Initial load
+        searchImages();
+    </script>
+</body>
+</html>
