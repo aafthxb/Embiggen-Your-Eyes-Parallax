@@ -236,6 +236,15 @@ const SpaceGallery = () => {
               >
                 <Dice6 className="h-5 w-5" />
               </Button>
+              <Link to="/compare" className="hidden md:inline-flex">
+                <Button
+                  variant="default"
+                  className="h-14 glass-panel border-primary/20 hover:border-primary"
+                >
+                  <SplitSquareVertical className="h-5 w-5 mr-2" />
+                  Start Comparison
+                </Button>
+              </Link>
             </div>
           </div>
         </header>
