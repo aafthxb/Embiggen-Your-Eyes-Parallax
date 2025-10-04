@@ -15,7 +15,10 @@ import {
   MoveHorizontal,
   Info,
   Maximize2,
-  X
+  X,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -120,6 +123,10 @@ function CompareCanvas({
   onRightLoad,              // NEW
   onLeftError,              // NEW
   onRightError,             // NEW
+  zoom,
+  pan,
+  onPan,
+  isPanning,
 }: {
   leftUrl: string;
   rightUrl: string;
@@ -133,6 +140,10 @@ function CompareCanvas({
   onRightLoad: () => void;    // NEW
   onLeftError: (msg: string) => void;   // NEW
   onRightError: (msg: string) => void;  // NEW
+  zoom: number;
+  pan: { x: number; y: number };
+  onPan: (pan: { x: number; y: number }) => void;
+  isPanning: boolean;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const overlayRef = useRef<HTMLImageElement | null>(null);
@@ -140,6 +151,7 @@ function CompareCanvas({
 
   const rafRef = useRef<number | null>(null);
   const pendingPctRef = useRef<number>(swipe);
+  const dragStartRef = useRef({ x: 0, y: 0 });
 
   const clampPercent = (clientX: number) => {
     if (!containerRef.current) return 50;
@@ -174,32 +186,41 @@ function CompareCanvas({
   };
 
   const onPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture?.(e.pointerId);
+    e.preventDefault();
+
+    if (isPanning) {
+      dragStartRef.current = { x: e.clientX - pan.x, y: e.clientY - pan.y };
+      return;
+    }
+
     if (mode === "swipe") {
-      e.currentTarget.setPointerCapture?.(e.pointerId);
       scheduleApply(clampPercent(e.clientX));
-      e.preventDefault();
       return;
     }
     if (mode === "spyglass") {
       const c = clampCursor(e.clientX, e.clientY);
       if (c) setCursor(c);
-      e.currentTarget.setPointerCapture?.(e.pointerId);
-      e.preventDefault();
     }
-  }, [mode, clampCursor]);
+  }, [mode, clampCursor, isPanning, pan]);
 
   const onPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!e.currentTarget.hasPointerCapture?.(e.pointerId)) return;
+
+    if (isPanning) {
+      onPan({ x: e.clientX - dragStartRef.current.x, y: e.clientY - dragStartRef.current.y });
+      return;
+    }
+
     if (mode === "swipe") {
-      if (e.currentTarget.hasPointerCapture?.(e.pointerId)) {
-        scheduleApply(clampPercent(e.clientX));
-      }
+      scheduleApply(clampPercent(e.clientX));
       return;
     }
     if (mode === "spyglass") {
       const c = clampCursor(e.clientX, e.clientY);
       if (c) setCursor(c);
     }
-  }, [mode, clampCursor]);
+  }, [mode, clampCursor, isPanning, onPan]);
 
   const onPointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (mode === "swipe") {
@@ -224,14 +245,17 @@ function CompareCanvas({
 
   const swipePct = Math.max(0, Math.min(100, swipe));
   const opacityPct = Math.max(0, Math.min(100, opacity)) / 100;
-  const wantsTouchNone = mode === "swipe" || mode === "spyglass";
+  const wantsTouchNone = mode === "swipe" || mode === "spyglass" || isPanning;
 
   return (
     <div
       ref={containerRef}
       className={clsx(
         "relative w-full h-[60vh] md:h-[65vh] lg:h-[70vh] rounded-xl overflow-hidden glass-panel select-none",
-        wantsTouchNone && "touch-none"
+        wantsTouchNone && "touch-none",
+        isPanning ? "cursor-move" : "cursor-auto",
+        mode === "swipe" && !isPanning && "cursor-col-resize",
+        mode === "spyglass" && !isPanning && "cursor-crosshair",
       )}
       style={{ touchAction: wantsTouchNone ? "none" as const : undefined, contain: "paint" }}
       onPointerDown={onPointerDown}
@@ -249,50 +273,59 @@ function CompareCanvas({
         </div>
       )}
 
-      {/* Base image (Left) */}
-      <img
-        src={leftUrl}
-        alt="Left"
-        decoding="async"
-        loading="eager"
-        className="absolute inset-0 w-full h-full object-contain bg-black/30 pointer-events-none"
-        draggable={false}
-        onLoad={onLeftLoad}                            // NEW
-        onError={() => onLeftError("Left image failed to load")} // NEW
-      />
-
-      {/* Overlay image (Right) for swipe/opacity ONLY */}
-      {(mode === "swipe" || mode === "opacity") && (
+      {/* Zoom & Pan Container */}
+      <div
+        className="absolute inset-0 transition-transform duration-200"
+        style={{
+          transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+          transition: isPanning ? 'none' : undefined,
+        }}
+      >
+        {/* Base image (Left) */}
         <img
-          ref={overlayRef}
-          src={rightUrl}
-          alt="Right"
+          src={leftUrl}
+          alt="Left"
           decoding="async"
+          loading="eager"
+          className="absolute inset-0 w-full h-full object-contain bg-black/30 pointer-events-none"
           draggable={false}
-          className={clsx(
-            "absolute inset-0 w-full h-full object-contain pointer-events-none",
-            mode !== "swipe" && "transition-[opacity,clip-path] duration-150"
-          )}
-          style={
-            mode === "swipe"
-              ? { clipPath: `inset(0 0 0 ${swipePct}%)`, willChange: "clip-path", transform: "translate3d(0,0,0)" }
-              : { opacity: opacityPct }
-          }
-          onLoad={onRightLoad}                           // NEW
-          onError={() => onRightError("Right image failed to load")} // NEW
+          onLoad={onLeftLoad}                            // NEW
+          onError={() => onLeftError("Left image failed to load")} // NEW
         />
-      )}
+
+        {/* Overlay image (Right) for swipe/opacity ONLY */}
+        {(mode === "swipe" || mode === "opacity") && (
+          <img
+            ref={overlayRef}
+            src={rightUrl}
+            alt="Right"
+            decoding="async"
+            draggable={false}
+            className={clsx(
+              "absolute inset-0 w-full h-full object-contain pointer-events-none",
+              mode !== "swipe" && "transition-[opacity,clip-path] duration-150"
+            )}
+            style={
+              mode === "swipe"
+                ? { clipPath: `inset(0 0 0 ${swipePct}%)`, willChange: "clip-path", transform: "translate3d(0,0,0)" }
+                : { opacity: opacityPct }
+            }
+            onLoad={onRightLoad}                           // NEW
+            onError={() => onRightError("Right image failed to load")} // NEW
+          />
+        )}
+      </div>
 
       {/* Swipe divider + handle */}
-      {mode === "swipe" && (
+      {mode === "swipe" && !isPanning && (
         <>
           <div
             className="absolute top-0 bottom-0 w-0.5 bg-white/80 pointer-events-none"
-            style={{ left: `${swipePct}%` }}
+            style={{ left: `calc(${swipePct}% - 1px)` }}
           />
           <div
             className="absolute top-0 bottom-0 -ml-3"
-            style={{ left: `${swipePct}%`, width: "24px" }}
+            style={{ left: `${swipePct}%`, width: "24px", cursor: "col-resize" }}
           >
             <button
               type="button"
@@ -311,7 +344,7 @@ function CompareCanvas({
                 if (e.key === "Home") { onSwipeChange(0); e.preventDefault(); }
                 if (e.key === "End") { onSwipeChange(100); e.preventDefault(); }
               }}
-              className="relative h-full w-full cursor-col-resize bg-transparent focus:outline-none"
+              className="relative h-full w-full bg-transparent focus:outline-none"
             >
               <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-full bg-black/70 text-white text-xs flex items-center gap-1">
                 <MoveHorizontal className="h-4 w-4" />
@@ -323,7 +356,7 @@ function CompareCanvas({
       )}
 
       {/* Spyglass overlay (only in spyglass mode) */}
-      {mode === "spyglass" && (
+      {mode === "spyglass" && !isPanning && (
         <>
           <img
             src={rightUrl}
@@ -333,8 +366,8 @@ function CompareCanvas({
             className="absolute inset-0 w-full h-full object-contain pointer-events-none"
             style={{
               clipPath: cursor
-                ? `circle(${spyglassRadius}px at ${cursor.x}px ${cursor.y}px)`
-                : `circle(0px at 50% 50%)`,
+                ? `circle(${spyglassRadius / zoom}px at ${cursor.x / zoom - pan.x / zoom}px ${cursor.y / zoom - pan.y / zoom}px)`
+                : `circle(0px at -100% -100%)`,
               willChange: "clip-path",
               transform: "translate3d(0,0,0)",
             }}
@@ -343,7 +376,7 @@ function CompareCanvas({
           />
           {cursor && (
             <div
-              className="pointer-events-none absolute"
+              className="pointer-events-none absolute top-0 left-0"
               style={{ left: cursor.x - 8, top: cursor.y - 8 }}
             >
               <div className="size-4 rounded-full border border-white/80" />
@@ -391,6 +424,10 @@ const ComparePage = () => {
   const [swipe, setSwipe] = useState<number>(50);
   const [blend, setBlend] = useState<number>(60);
   const [lens, setLens] = useState<number>(140);
+
+  // Zoom & Pan state
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
 
   // Phase 1: data picker state
   const [sync, setSync] = useState<boolean>(true);
@@ -470,6 +507,26 @@ const ComparePage = () => {
   }
 }
 
+  const handleZoomIn = () => {
+    setZoom(z => Math.min(z + 0.5, 8));
+  };
+
+  const handleZoomOut = () => {
+    const newZoom = Math.max(zoom - 0.5, 1);
+    setZoom(newZoom);
+    if (newZoom === 1) {
+      setPan({ x: 0, y: 0 });
+    }
+  };
+
+  const handleResetView = () => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  };
+
+  const isPanning = zoom > 1;
+
+
 
   // Mode control UI (no slider for swipe)
   const modeControl = useMemo(() => {
@@ -506,7 +563,7 @@ const ComparePage = () => {
           <Link to="/">
             <Button variant="ghost" className="text-foreground hover:text-primary">
               <ArrowLeft className="mr-2 h-5 w-5" />
-              Back to Gallery
+              Back to Home
             </Button>
           </Link>
           <div className="hidden md:flex items-center gap-3">
@@ -784,22 +841,51 @@ const ComparePage = () => {
       {/* Viewer */}
         <main className="container mx-auto px-4 mt-4">
         <div className="relative">
-            {/* Fullscreen toggle */}
-            <div className="absolute top-3 right-3 z-20">
-            <Button
-                variant="secondary"
-                size="icon"
-                aria-label="Enter fullscreen"
-                onClick={() => setIsFullscreen(true)}
-            >
-                <Maximize2 className="h-4 w-4" />
-            </Button>
+            {/* Viewer Controls */}
+            <div className="absolute top-3 right-3 z-20 flex gap-2">
+              <Button
+                  variant="secondary"
+                  size="icon"
+                  aria-label="Zoom out"
+                  onClick={handleZoomOut}
+                  disabled={zoom <= 1}
+              >
+                  <ZoomOut className="h-4 w-4" />
+              </Button>
+              <Button
+                  variant="secondary"
+                  size="icon"
+                  aria-label="Zoom in"
+                  onClick={handleZoomIn}
+                  disabled={zoom >= 8}
+              >
+                  <ZoomIn className="h-4 w-4" />
+              </Button>
+              <Button
+                  variant="secondary"
+                  size="icon"
+                  aria-label="Reset view"
+                  onClick={handleResetView}
+                  disabled={zoom <= 1 && pan.x === 0 && pan.y === 0}
+              >
+                  <RotateCcw className="h-4 w-4" />
+              </Button>
+              <Button
+                  variant="secondary"
+                  size="icon"
+                  aria-label="Enter fullscreen"
+                  onClick={() => setIsFullscreen(true)}
+              >
+                  <Maximize2 className="h-4 w-4" />
+              </Button>
             </div>
 
             <CompareCanvas
             leftUrl={left.url}
             rightUrl={right.url}
             mode={mode}
+            zoom={zoom}
+            pan={pan}
             swipe={swipe}
             opacity={blend}
             spyglassRadius={lens}
@@ -809,6 +895,8 @@ const ComparePage = () => {
             onRightLoad={() => setRight((s) => ({ ...s, loading: false, error: null }))}
             onLeftError={(msg) => setLeft((s) => ({ ...s, loading: false, error: msg }))}
             onRightError={(msg) => setRight((s) => ({ ...s, loading: false, error: msg }))}
+            onPan={setPan}
+            isPanning={isPanning}
             />
         </div>
         </main>
@@ -819,6 +907,7 @@ const ComparePage = () => {
         <div className="glass-panel rounded-lg p-3 text-sm text-white/90 flex flex-col gap-2">
           <div className="flex flex-wrap gap-3">
             <span>Left: {leftLayer} • {leftDate}</span>
+            <span>Zoom: {zoom.toFixed(1)}x</span>
             <span>Right: {rightLayer} • {rightDate}</span>
             <span>Region: {customBbox.trim() || currentRegion.label} ({customBbox.trim() ? customBbox : currentRegion.bbox})</span>
           </div>
@@ -828,7 +917,7 @@ const ComparePage = () => {
           {(left.error || right.error) && (
             <div className="text-red-300">Couldn’t load one or both images. Try another date or layer.</div>
           )}
-          {!left.url && !right.url && (
+          {!left.url && !right.url && !left.loading && !right.loading && (
             <div className="text-white/70 flex items-center gap-2">
               <Info className="h-4 w-4" />
               Tip: Start with True Color today vs yesterday, then try Night Lights for the same area at night.
@@ -843,14 +932,37 @@ const ComparePage = () => {
     {/* Top bar with close */}
     <div className="flex items-center justify-between px-4 py-3">
       <h2 className="text-white/90 text-sm">Fullscreen Compare</h2>
-      <Button
-        variant="secondary"
-        size="icon"
-        aria-label="Exit fullscreen"
-        onClick={() => setIsFullscreen(false)}
-      >
-        <X className="h-4 w-4" />
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button
+            variant="secondary"
+            size="icon"
+            aria-label="Zoom out"
+            onClick={handleZoomOut}
+            disabled={zoom <= 1}
+        >
+            <ZoomOut className="h-4 w-4" />
+        </Button>
+        <Button
+            variant="secondary"
+            size="icon"
+            aria-label="Zoom in"
+            onClick={handleZoomIn}
+            disabled={zoom >= 8}
+        >
+            <ZoomIn className="h-4 w-4" />
+        </Button>
+        <Button variant="secondary" size="icon" aria-label="Reset view" onClick={handleResetView} disabled={zoom <= 1 && pan.x === 0 && pan.y === 0}>
+            <RotateCcw className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="secondary"
+          size="icon"
+          aria-label="Exit fullscreen"
+          onClick={() => setIsFullscreen(false)}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
 
     {/* Controls (mode + sliders) */}
@@ -901,11 +1013,13 @@ const ComparePage = () => {
     </div>
 
     {/* Fullscreen viewer */}
-    <div className="px-4 py-3">
+    <div className="relative px-4 py-3">
       <CompareCanvas
         leftUrl={left.url}
         rightUrl={right.url}
         mode={mode}
+        zoom={zoom}
+        pan={pan}
         swipe={swipe}
         opacity={blend}
         spyglassRadius={lens}
@@ -915,6 +1029,8 @@ const ComparePage = () => {
         onRightLoad={() => setRight((s) => ({ ...s, loading: false, error: null }))}
         onLeftError={(msg) => setLeft((s) => ({ ...s, loading: false, error: msg }))}
         onRightError={(msg) => setRight((s) => ({ ...s, loading: false, error: msg }))}
+        onPan={setPan}
+        isPanning={isPanning}
       />
     </div>
   </div>
