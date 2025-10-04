@@ -146,6 +146,15 @@ const Apod = () => {
                 <h3 className="text-xl font-semibold mb-4">Explanation</h3>
                 <p className="text-muted-foreground leading-relaxed">{apod.explanation}</p>
               </div>
+
+              {/* Archive Button */}
+              <div className="mt-6 text-center">
+                <a href="https://apod.nasa.gov/apod/archivepix.html" target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline">
+                    Archive
+                  </Button>
+                </a>
+              </div>
             </div>
           )}
         </div>
