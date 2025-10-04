@@ -1,73 +1,14 @@
-# Welcome to your Lovable project
+# Parallax – "Embiggen Your Eyes"
 
-## Project info
+A user friendly, sleek website powered by Nasa databases. Parallax offers a beautiful, beginner friendly interface for viewing and comparing various hi-res images from the Nasa's Database.
 
-**URL**: https://lovable.dev/projects/8a513426-5938-4198-9ef7-c1fdf85b9daa
+## Features
+Parallax is packed with features to make it easier for using the different Nasa's Dataset and to make it reach everyone.
+* 🌌**Astronomy Picture Of the Day(APOD):** Lets you view different pictures of space daily.
+* 🌍**Earth Comparison:** Lets you compare two different sateilte images of earth at two different time.
+* 🖼️**Space Gallery:** Lets you view all the images from the NASA's database all in one place.
 
-## How can I edit this code?
 
-There are several ways of editing your application.
+We propose an interactive platform for exploring NASA’s massive image datasets. The app will let users zoom, pan, and compare high-resolution Earth, lunar, and space images across time, spectrum, and data types (e.g., optical, altimetry). Features include AI-powered search, overlays, and annotation tools for identifying and labeling features. Designed for both the public and researchers, the system will use adaptive image serving to handle large datasets efficiently. Its user-friendly interface makes it suitable for science museums as well as detailed scientific studies.
 
-**Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8a513426-5938-4198-9ef7-c1fdf85b9daa) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/8a513426-5938-4198-9ef7-c1fdf85b9daa) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
