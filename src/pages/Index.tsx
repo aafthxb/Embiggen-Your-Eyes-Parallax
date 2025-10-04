@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Globe2, Telescope, SplitSquareVertical } from "lucide-react";
+import { Globe2, Telescope } from "lucide-react";
 
 const Index = () => {
   return (
@@ -146,16 +146,6 @@ const Index = () => {
               >
                 <Telescope className="mr-3 h-6 w-6" />
                 Space Gallery
-              </Button>
-            </Link>
-
-            <Link to="/compare">
-              <Button
-                size="lg"
-                className="glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-green-500/40 hover:border-green-500/60 bg-green-500/10 hover:bg-green-500/20 text-foreground font-semibold"
-              >
-                <Globe2 className="mr-3 h-6 w-6" />
-                Earth
               </Button>
             </Link>
 
