@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { ArrowLeft, ZoomIn, ZoomOut, RotateCcw, Info, Search, X, Dice6 } from "lucide-react";
+import { useState, useRef, useMemo } from "react";
+import { ArrowLeft, ZoomIn, ZoomOut, RotateCcw, Info, Search, X, Dice6, SplitSquareVertical } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -143,26 +143,41 @@ const SpaceGallery = () => {
       image.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Background Stars 
+  const stars = useMemo(
+  () =>
+    Array.from({ length: 100 }, (_, i) => ({
+      id: i,
+      size: Math.random() * 3 + 1,
+      top: Math.random() * 100,
+      left: Math.random() * 100,
+      opacity: Math.random() * 0.7 + 0.3,
+      duration: Math.random() * 3 + 2,
+      delay: Math.random() * 2,
+    })),
+  []
+);
+
   return (
     <div className="min-h-screen space-gradient relative">
       <style dangerouslySetInnerHTML={{ __html: `::-webkit-scrollbar { display: none; } body { scrollbar-width: none; }` }} />
       {/* Animated stars background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(100)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-white animate-pulse"
-            style={{
-              width: `${Math.random() * 3 + 1}px`,
-              height: `${Math.random() * 3 + 1}px`,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              opacity: Math.random() * 0.7 + 0.3,
-              animationDuration: `${Math.random() * 3 + 2}s`,
-              animationDelay: `${Math.random() * 2}s`
-            }}
-          />
-        ))}
+      {stars.map((star) => (
+        <div
+          key={star.id}
+          className="absolute rounded-full bg-white animate-pulse"
+          style={{
+            width: `${star.size}px`,
+            height: `${star.size}px`,
+            top: `${star.top}%`,
+            left: `${star.left}%`,
+            opacity: star.opacity,
+            animationDuration: `${star.duration}s`,
+            animationDelay: `${star.delay}s`,
+          }}
+        />
+      ))}
       </div>
 
       {/* Main content */}
@@ -221,6 +236,15 @@ const SpaceGallery = () => {
               >
                 <Dice6 className="h-5 w-5" />
               </Button>
+              <Link to="/compare" className="hidden md:inline-flex">
+                <Button
+                  variant="default"
+                  className="h-14 glass-panel border-primary/20 hover:border-primary"
+                >
+                  <SplitSquareVertical className="h-5 w-5 mr-2" />
+                  Start Comparison
+                </Button>
+              </Link>
             </div>
           </div>
         </header>

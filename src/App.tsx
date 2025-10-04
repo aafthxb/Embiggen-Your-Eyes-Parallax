@@ -8,6 +8,7 @@ import CelestialBodies from "./pages/CelestialBodies";
 import SpaceGallery from "./pages/SpaceGallery";
 import Apod from "./pages/Apod";
 import NotFound from "./pages/NotFound";
+import ComparePage from "./pages/ComparePage"
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/celestial-bodies" element={<CelestialBodies />} />
           <Route path="/space-gallery" element={<SpaceGallery />} />
+          <Route path="/compare" element={<ComparePage />} />
           <Route path="/apod" element={<Apod />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
