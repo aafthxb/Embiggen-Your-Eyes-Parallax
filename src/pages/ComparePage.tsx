@@ -617,7 +617,7 @@ const ComparePage = () => {
       setLeftDate(e.target.value);
       if (sync) setRightDate(e.target.value);
     }}
-    className="min-w-0 flex-[1_1_160px]"  // allow shrinking, base width ~160px
+    className="min-w-0 flex-[1_1_160px] [color-scheme:dark]" // allow shrinking, base width ~160px
   />
   <div className="flex items-center gap-2 shrink-0">
     <Button
@@ -698,7 +698,7 @@ const ComparePage = () => {
       setRightDate(e.target.value);
       if (sync) setLeftDate(e.target.value);
     }}
-    className="min-w-0 flex-[1_1_160px]"
+    className="min-w-0 flex-[1_1_160px] [color-scheme:dark]"
   />
   <div className="flex items-center gap-2 shrink-0">
     <Button variant="outline" onClick={() => setRightDate(shiftDate(rightDate, -1))} className="px-3">
