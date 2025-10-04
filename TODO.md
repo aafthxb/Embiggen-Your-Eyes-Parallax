@@ -1,0 +1,5 @@
+- [x] Revert SpaceGallery.tsx to original state with gallery functionality
+- [x] Create new Apod.tsx page with APOD functionality
+- [x] Add APOD button to home page (Index.tsx)
+- [x] Add /apod route to App.tsx
+- [ ] Test the APOD page to ensure it loads correctly and handles errors
