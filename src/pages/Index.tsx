@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Globe2, Telescope } from "lucide-react";
 import { Globe2, Telescope, SplitSquareVertical } from "lucide-react";
 
 const Index = () => {

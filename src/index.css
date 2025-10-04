@@ -81,14 +81,3 @@ All colors MUST be HSL.
     background-clip: text;
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-pulse { animation: none !important; }
-  * { transition: none !important; }
-}
-
-/* Ensure modal images fit well on small devices */
-.object-contain {
-  max-width: 100%;
-  max-height: 100%;
-}
