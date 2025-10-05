@@ -1,4 +1,4 @@
-# Parallax - Embiggen Your Eyes
+# Parallax - Nasa Space Apps Challenge 2025 - Embiggen Your Eyes
 A user-friendly and sleek website that brings the vastness of NASA's image databases to your fingertips. Parallax offers a beautiful, beginner-friendly interface for viewing and comparing high-resolution images from space.
 
 ## 🚀 Live Demo
@@ -46,4 +46,5 @@ Voila! The website is now running locally on your PC.
 This project is a submission for the NASA Space Apps Hackathon 2025, created for the "Embiggen Your Eyes" challenge.
 
 Please note: As this project relies on live data from NASA's APIs, some features might take a moment to load, and there may be occasional issues if the databases are temporarily unavailable.
+
 
