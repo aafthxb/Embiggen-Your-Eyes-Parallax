@@ -123,16 +123,16 @@ const Index = () => {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 text-center px-4 max-w-2xl">
+      <div className="relative z-10 text-center px-4 max-w-xl">
   <h1 className="text-8xl font-bold mb-16 tracking-tight">
           Parallax
         </h1>
-
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+        
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center px-4 sm:px-0">
             <Link to="/celestial-bodies">
               <Button 
                 size="lg" 
-                className="w-full glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-primary/40 hover:border-primary/60 bg-primary/10 hover:bg-primary/20 text-foreground font-semibold"
+                className="w-full h-full glass-panel text-lg px-8 py-6 md:py-5 hover:scale-105 transition-transform duration-300 border-2 border-primary/40 hover:border-primary/60 bg-primary/10 hover:bg-primary/20 text-foreground font-semibold"
               >
                 <Globe2 className="mr-3 h-6 w-6" />
                 Celestial Bodies
@@ -142,7 +142,7 @@ const Index = () => {
             <Link to="/space-gallery">
               <Button 
                 size="lg" 
-                className="w-full glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-secondary/40 hover:border-secondary/60 bg-secondary/10 hover:bg-secondary/20 text-foreground font-semibold"
+                className="w-full h-full glass-panel text-lg px-8 py-6 md:py-5 hover:scale-105 transition-transform duration-300 border-2 border-secondary/40 hover:border-secondary/60 bg-secondary/10 hover:bg-secondary/20 text-foreground font-semibold"
               >
                 <Telescope className="mr-3 h-6 w-6" />
                 Space Gallery
@@ -152,7 +152,7 @@ const Index = () => {
             <Link to="/compare">
               <Button
                 size="lg"
-                className="w-full glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-green-500/40 hover:border-green-500/60 bg-green-500/10 hover:bg-green-500/20 text-foreground font-semibold"
+                className="w-full h-full glass-panel text-lg px-8 py-6 md:py-4 hover:scale-105 transition-transform duration-300 border-2 border-green-500/40 hover:border-green-500/60 bg-green-500/10 hover:bg-green-500/20 text-foreground font-semibold"
               >
                 <Globe2 className="mr-3 h-6 w-6" />
                 Earth
@@ -162,7 +162,7 @@ const Index = () => {
             <Link to="/apod">
               <Button
                 size="lg"
-                className="w-full glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-accent/40 hover:border-accent/60 bg-accent/10 hover:bg-accent/20 text-foreground font-semibold flex items-center justify-center gap-2"
+                className="w-full h-full glass-panel text-lg px-8 py-6 md:py-4 hover:scale-105 transition-transform duration-300 border-2 border-accent/40 hover:border-accent/60 bg-accent/10 hover:bg-accent/20 text-foreground font-semibold flex items-center justify-center gap-2"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v9.75l4.5 2.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

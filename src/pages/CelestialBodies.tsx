@@ -305,7 +305,7 @@ Do not include any introductory sentences or extra commentary.`;
                     disabled={loadingGemini}
                     variant="secondary"
                     size="icon"
-                    className="bg-primary/20 hover:bg-primary/30"
+                    className="bg-foreground/10 text-foreground hover:bg-foreground/20 disabled:bg-muted/40 disabled:text-muted-foreground"
                     title="Get AI info"
                   >
                     <GeminiIcon />
@@ -315,7 +315,7 @@ Do not include any introductory sentences or extra commentary.`;
                     disabled={zoom <= 1}
                     variant="secondary"
                     size="icon"
-                    className="bg-primary/20 hover:bg-primary/30"
+                    className="bg-foreground/10 text-foreground hover:bg-foreground/20 disabled:bg-muted/40 disabled:text-muted-foreground"
                   >
                     <ZoomOut className="h-5 w-5" />
                   </Button>
@@ -324,7 +324,7 @@ Do not include any introductory sentences or extra commentary.`;
                     disabled={zoom >= 5}
                     variant="secondary"
                     size="icon"
-                    className="bg-primary/20 hover:bg-primary/30"
+                    className="bg-foreground/10 text-foreground hover:bg-foreground/20 disabled:bg-muted/40 disabled:text-muted-foreground"
                   >
                     <ZoomIn className="h-5 w-5" />
                   </Button>
@@ -332,7 +332,7 @@ Do not include any introductory sentences or extra commentary.`;
                     onClick={handleReset}
                     variant="secondary"
                     size="icon"
-                    className="bg-primary/20 hover:bg-primary/30"
+                    className="bg-foreground/10 text-foreground hover:bg-foreground/20 disabled:bg-muted/40 disabled:text-muted-foreground"
                   >
                     <RotateCcw className="h-5 w-5" />
                   </Button>
@@ -340,7 +340,7 @@ Do not include any introductory sentences or extra commentary.`;
                     onClick={() => setShowGrid(!showGrid)}
                     variant="secondary"
                     size="icon"
-                    className={`${showGrid ? "bg-primary/30" : "bg-primary/20"} hover:bg-primary/30`}
+                    className={`${showGrid ? "bg-foreground/20" : "bg-foreground/10"} text-foreground hover:bg-foreground/20 disabled:bg-muted/40 disabled:text-muted-foreground`}
                   >
                     <Grid3x3 className="h-5 w-5" />
                   </Button>
