@@ -2,53 +2,47 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Dark space-themed design system */
 
 @layer base {
   :root {
-    --background: 262 47% 10%;
-    --foreground: 0 0% 98%;
+    /* Space theme */
+    --background: 238 28% 6%; /* deep indigo near-black */
+    --foreground: 0 0% 98%; /* near-white text */
 
-    --card: 262 47% 15%;
+    --card: 238 28% 8%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 262 47% 12%;
+    --popover: 238 28% 7%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 280 100% 70%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 210 12% 86%; /* subtle light for accents */
+    --primary-foreground: 238 28% 6%;
 
-    --secondary: 217 71% 53%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 220 40% 70%;
+    --secondary-foreground: 238 28% 6%;
 
-    --muted: 262 30% 25%;
+    --muted: 238 20% 12%;
     --muted-foreground: 0 0% 70%;
 
-    --accent: 280 100% 80%;
-    --accent-foreground: 262 47% 10%;
+    --accent: 260 80% 66%;
+    --accent-foreground: 238 28% 6%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 80% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 262 30% 30%;
-    --input: 262 30% 20%;
-    --ring: 280 100% 70%;
+    --border: 230 20% 14%;
+    --input: 230 18% 9%;
+    --ring: 280 80% 60%;
 
     --radius: 1rem;
 
-    /* Space theme gradients */
-    --space-gradient: linear-gradient(135deg, hsl(280, 47%, 18%) 0%, hsl(217, 71%, 33%) 50%, hsl(231, 48%, 28%) 100%);
-    --glass-bg: hsla(262, 47%, 15%, 0.6);
-    --glass-border: hsla(280, 100%, 80%, 0.2);
-    
-    /* Cosmic colors */
-    --cosmic-purple: 280 100% 70%;
-    --cosmic-blue: 217 71% 53%;
-    --cosmic-indigo: 231 48% 48%;
+    /* Space theme gradients and glass */
+    --space-gradient: linear-gradient(135deg, hsl(246 58% 10%) 0%, hsl(217 71% 12%) 50%, hsl(231 48% 14%) 100%);
+    --glass-bg: hsla(236, 26%, 8%, 0.55);
+    --glass-border: hsla(280, 100%, 80%, 0.08);
+
     --star-white: 0 0% 100%;
-    --nebula-pink: 320 70% 60%;
   }
 }
 
@@ -60,24 +54,75 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-image: var(--space-gradient);
+    background-size: cover;
+    background-repeat: no-repeat;
   }
 }
 
 @layer utilities {
   .space-gradient {
-    background: linear-gradient(135deg, hsl(280, 47%, 18%) 0%, hsl(217, 71%, 33%) 50%, hsl(231, 48%, 28%) 100%);
+    background: var(--space-gradient);
   }
-  
+
   .glass-panel {
-    background: hsla(262, 47%, 15%, 0.6);
-    border: 1px solid hsla(280, 100%, 80%, 0.2);
-    backdrop-filter: blur(16px);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
   }
-  
+
   .gradient-text {
-    background: linear-gradient(135deg, hsl(280, 100%, 80%) 0%, hsl(217, 71%, 63%) 50%, hsl(280, 100%, 70%) 100%);
+    background: linear-gradient(135deg, hsl(280 100% 70%) 0%, hsl(217 71% 63%) 50%, hsl(280 100% 70%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* small helper for stars (used in some pages) */
+  .star {
+    background: hsl(var(--star-white));
+    border-radius: 9999px;
+    box-shadow: 0 0 6px rgba(255,255,255,0.08);
+  }
+
+  /* Mobile-friendly overrides */
+  @media (max-width: 640px) {
+    html, body {
+      font-size: 16px; /* Base font size for better readability */
+      background-position: top center;
+    }
+
+    .container {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .glass-panel {
+      padding: 1rem; /* More breathing room inside panels */
+      border-radius: 0.5rem;
+    }
+
+    /* Hide decorative animated pulses on small screens to improve performance */
+    .animate-pulse:not([data-force-animate="true"]) {
+      animation: none;
+    }
+
+    .logo {
+      height: 2.5rem;
+      padding: 0.25rem;
+    }
+
+    /* Scale down oversized headings for mobile */
+    .text-5xl { font-size: clamp(1.5rem, 6vw, 2.25rem) !important; }
+    .text-8xl { font-size: clamp(2.5rem, 12vw, 3.75rem) !important; }
+  }
+
+  /* General responsive helpers */
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+    display: block;
   }
 }

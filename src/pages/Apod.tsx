@@ -38,26 +38,8 @@ const Apod = () => {
   }, []);
 
   return (
-    <div className="min-h-screen space-gradient relative">
+    <div className="min-h-screen bg-background relative">
       <style dangerouslySetInnerHTML={{ __html: `::-webkit-scrollbar { display: none; } body { scrollbar-width: none; }` }} />
-      {/* Animated stars background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(100)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-white animate-pulse"
-            style={{
-              width: `${Math.random() * 3 + 1}px`,
-              height: `${Math.random() * 3 + 1}px`,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              opacity: Math.random() * 0.7 + 0.3,
-              animationDuration: `${Math.random() * 3 + 2}s`,
-              animationDelay: `${Math.random() * 2}s`
-            }}
-          />
-        ))}
-      </div>
 
       {/* Main content */}
       <div className="relative z-10 min-h-screen">
@@ -73,7 +55,7 @@ const Apod = () => {
           </div>
 
           <div className="max-w-4xl mx-auto text-center mt-8">
-            <h1 className="text-5xl font-bold mb-6 gradient-text">
+            <h1 className="text-5xl font-bold mb-6">
               {apod ? apod.title : 'Astronomy Picture of the Day'}
             </h1>
           </div>
