@@ -1,7 +1,9 @@
 import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ArrowLeft, ZoomIn, ZoomOut, RotateCcw, Globe, Grid3x3 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const GeminiIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -60,6 +62,16 @@ const CelestialBodies = () => {
   const [geminiResponse, setGeminiResponse] = useState<string | null>(null);
   const [loadingGemini, setLoadingGemini] = useState(false);
   const [errorGemini, setErrorGemini] = useState<string | null>(null);
+
+  const [pageLoading, setPageLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial data fetching
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleGeminiQuery = async () => {
     if (loadingGemini) return;
@@ -175,7 +187,7 @@ Do not include any introductory sentences or extra commentary.`;
 
 
   return (
-    <div className="min-h-screen space-gradient relative overflow-hidden">
+  <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Animated stars background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(100)].map((_, i) => (
@@ -196,24 +208,69 @@ Do not include any introductory sentences or extra commentary.`;
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 flex h-screen">
+      {pageLoading ? (
+        <div className="relative z-10 flex flex-col md:flex-row md:h-screen">
+          {/* Sidebar Skeleton */}
+          <aside className="w-full md:w-80 glass-panel m-2 md:m-4 rounded-2xl p-4 md:p-6 flex flex-col">
+            <Skeleton className="h-9 w-36 mb-4 md:mb-6" />
+            <Skeleton className="h-8 w-48 mb-4 md:mb-6" />
+            <div className="flex md:flex-col gap-3 md:space-y-3 md:flex-1 overflow-hidden pb-2 md:pb-0">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="w-64 md:w-full flex-shrink-0 p-4 rounded-xl glass-panel">
+                  <div className="flex items-start gap-3">
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <div className="flex-1">
+                      <Skeleton className="h-6 w-24 mb-2" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-3/4 mt-1" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </aside>
+
+          {/* Main Content Skeleton */}
+          <main className="flex-1 p-2 md:p-4 flex flex-col min-h-0">
+            <div className="flex flex-col lg:flex-row flex-1 gap-4 min-h-0">
+              <div className="glass-panel rounded-2xl p-6 flex-1 flex flex-col">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
+                  <div>
+                    <Skeleton className="h-9 w-40 mb-2" />
+                    <Skeleton className="h-4 w-20" />
+                  </div>
+                  <div className="flex gap-2 flex-wrap">
+                    <Skeleton className="h-10 w-10 rounded-md" />
+                    <Skeleton className="h-10 w-10 rounded-md" />
+                    <Skeleton className="h-10 w-10 rounded-md" />
+                    <Skeleton className="h-10 w-10 rounded-md" />
+                    <Skeleton className="h-10 w-10 rounded-md" />
+                  </div>
+                </div>
+                <Skeleton className="flex-1 w-full rounded-xl min-h-[300px] md:min-h-0" />
+              </div>
+            </div>
+          </main>
+        </div>
+      ) : (
+      <div className="relative z-10 flex flex-col md:flex-row md:h-screen">
         {/* Sidebar */}
-        <aside className="w-80 glass-panel m-4 rounded-2xl p-6 flex flex-col">
+        <aside className="w-full md:w-80 glass-panel m-2 md:m-4 rounded-2xl p-4 md:p-6 flex flex-col">
           <Link to="/">
-            <Button variant="ghost" className="mb-6 -ml-2 text-foreground hover:text-primary">
+            <Button variant="ghost" className="mb-4 md:mb-6 -ml-2 text-foreground hover:text-primary">
               <ArrowLeft className="mr-2 h-5 w-5" />
               Back to Home
             </Button>
           </Link>
 
-          <h2 className="text-2xl font-bold mb-6 gradient-text">Celestial Bodies</h2>
+          <h2 className="text-2xl font-bold mb-4 md:mb-6">Celestial Bodies</h2>
 
-          <div className="space-y-3 flex-1 overflow-y-auto">
+          <div className="flex md:flex-col gap-3 md:space-y-3 md:flex-1 overflow-x-auto md:overflow-y-auto pb-2 md:pb-0">
             {celestialBodies.map((body) => (
               <button
                 key={body.id}
                 onClick={() => setSelectedBody(body)}
-                className={`w-full text-left p-4 rounded-xl transition-all ${
+                className={`w-64 md:w-full flex-shrink-0 text-left p-4 rounded-xl transition-all ${
                   selectedBody.id === body.id
                     ? "bg-primary/20 border-2 border-primary shadow-lg shadow-primary/20"
                     : "glass-panel hover:bg-primary/10"
@@ -232,19 +289,18 @@ Do not include any introductory sentences or extra commentary.`;
         </aside>
 
         {/* Map viewer and AI Insights container */}
-        <main className="flex-1 p-4 flex flex-col">
-          <div className="flex flex-1 gap-4">
+        <main className="flex-1 p-2 md:p-4 flex flex-col min-h-0">
+          <div className="flex flex-col lg:flex-row flex-1 gap-4 min-h-0">
             {/* Map viewer */}
             <div className="glass-panel rounded-2xl p-6 flex-1 flex flex-col">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
                 <div>
                   <h1 className="text-3xl font-bold gradient-text">{selectedBody.name}</h1>
                   <p className="text-sm text-muted-foreground mt-1">
                     Zoom: {zoom.toFixed(1)}x
                   </p>
                 </div>
-
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Button
                     onClick={handleGeminiQuery}
                     disabled={loadingGemini}
@@ -294,7 +350,7 @@ Do not include any introductory sentences or extra commentary.`;
 
               {/* Map container */}
               <div
-                className="flex-1 relative overflow-hidden rounded-xl bg-black/40 cursor-move"
+                className="flex-1 relative overflow-hidden rounded-xl bg-muted/40 cursor-move min-h-[300px] md:min-h-0"
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
@@ -348,7 +404,7 @@ Do not include any introductory sentences or extra commentary.`;
 
             {/* AI Insights box */}
             {(geminiResponse || errorGemini || loadingGemini) && (
-              <div ref={aiInsightsRef} className="glass-panel rounded-2xl p-6 max-w-80 flex-shrink-0" style={{ minWidth: '20rem' }}>
+              <div ref={aiInsightsRef} className="glass-panel rounded-2xl p-6 w-full lg:max-w-sm flex-shrink-0 overflow-y-auto">
                 <h3 className="text-xl font-bold mb-4 gradient-text">AI Insights</h3>
                 {loadingGemini && (
                   <div className="flex items-center gap-2">
@@ -367,6 +423,7 @@ Do not include any introductory sentences or extra commentary.`;
           </div>
         </main>
       </div>
+      )}
     </div>
   );
 };

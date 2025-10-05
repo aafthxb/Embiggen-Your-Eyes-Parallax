@@ -4,7 +4,7 @@ import { Globe2, Telescope, SplitSquareVertical } from "lucide-react";
 
 const Index = () => {
   return (
-    <div className="min-h-screen space-gradient relative overflow-hidden flex items-center justify-center">
+  <div className="min-h-screen bg-background relative overflow-hidden flex items-center justify-center">
       {/* Animated space elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Stars */}
@@ -106,10 +106,10 @@ const Index = () => {
 
         {/* Black hole */}
         <div className="absolute opacity-30" style={{ bottom: "20%", right: "10%" }}>
-          <div className="relative w-20 h-20">
-            <div className="absolute inset-0 rounded-full bg-black border-2 border-purple-500 animate-spin" style={{ animationDuration: "10s" }} />
+            <div className="relative w-20 h-20">
+            <div className="absolute inset-0 rounded-full bg-muted border-2 border-purple-500 animate-spin" style={{ animationDuration: "10s" }} />
             <div className="absolute inset-2 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 animate-spin" style={{ animationDuration: "8s" }} />
-            <div className="absolute inset-4 rounded-full bg-black" />
+            <div className="absolute inset-4 rounded-full bg-muted/60" />
           </div>
         </div>
 
@@ -124,7 +124,7 @@ const Index = () => {
 
       {/* Main content */}
       <div className="relative z-10 text-center px-4 max-w-2xl">
-        <h1 className="text-8xl font-bold mb-16 gradient-text tracking-tight">
+  <h1 className="text-8xl font-bold mb-16 tracking-tight">
           Parallax
         </h1>
 
@@ -132,7 +132,7 @@ const Index = () => {
             <Link to="/celestial-bodies">
               <Button 
                 size="lg" 
-                className="glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-primary/40 hover:border-primary/60 bg-primary/10 hover:bg-primary/20 text-foreground font-semibold"
+                className="w-full glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-primary/40 hover:border-primary/60 bg-primary/10 hover:bg-primary/20 text-foreground font-semibold"
               >
                 <Globe2 className="mr-3 h-6 w-6" />
                 Celestial Bodies
@@ -142,7 +142,7 @@ const Index = () => {
             <Link to="/space-gallery">
               <Button 
                 size="lg" 
-                className="glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-secondary/40 hover:border-secondary/60 bg-secondary/10 hover:bg-secondary/20 text-foreground font-semibold"
+                className="w-full glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-secondary/40 hover:border-secondary/60 bg-secondary/10 hover:bg-secondary/20 text-foreground font-semibold"
               >
                 <Telescope className="mr-3 h-6 w-6" />
                 Space Gallery
@@ -152,7 +152,7 @@ const Index = () => {
             <Link to="/compare">
               <Button
                 size="lg"
-                className="glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-green-500/40 hover:border-green-500/60 bg-green-500/10 hover:bg-green-500/20 text-foreground font-semibold"
+                className="w-full glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-green-500/40 hover:border-green-500/60 bg-green-500/10 hover:bg-green-500/20 text-foreground font-semibold"
               >
                 <Globe2 className="mr-3 h-6 w-6" />
                 Earth
@@ -162,7 +162,7 @@ const Index = () => {
             <Link to="/apod">
               <Button
                 size="lg"
-                className="glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-accent/40 hover:border-accent/60 bg-accent/10 hover:bg-accent/20 text-foreground font-semibold flex items-center justify-center gap-2"
+                className="w-full glass-panel text-lg px-8 py-6 hover:scale-105 transition-transform duration-300 border-2 border-accent/40 hover:border-accent/60 bg-accent/10 hover:bg-accent/20 text-foreground font-semibold flex items-center justify-center gap-2"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v9.75l4.5 2.25M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

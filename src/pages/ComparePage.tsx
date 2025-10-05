@@ -27,7 +27,7 @@ const SpinnerRing = ({ size = 40 }: { size?: number }) => (
   <div
     aria-label="Loading"
     role="status"
-    className="animate-spin rounded-full border-2 border-white/30 border-t-transparent"
+    className="animate-spin rounded-full border-2 border-border border-t-transparent"
     style={{ width: size, height: size }}
   />
 );
@@ -98,11 +98,11 @@ function Slider({
       onValueChange={(vals) => onValueChange(vals[0] ?? value)}
       className={clsx("relative flex items-center select-none touch-none w-full h-5", className)}
     >
-      <SliderPrimitive.Track className="relative grow rounded-full h-1 bg-white/20">
+      <SliderPrimitive.Track className="relative grow rounded-full h-1 bg-muted">
         <SliderPrimitive.Range className="absolute h-full bg-primary rounded-full" />
       </SliderPrimitive.Track>
       <SliderPrimitive.Thumb
-        className="block size-4 rounded-full bg-primary border border-white/30 shadow focus:outline-none focus:ring-2 focus:ring-primary/60"
+        className="block size-4 rounded-full bg-primary border border-border shadow focus:outline-none focus:ring-2 focus:ring-primary/60"
         aria-label="Slider"
       />
     </SliderPrimitive.Root>
@@ -265,10 +265,10 @@ function CompareCanvas({
     >
       {/* Loading overlay */}
       {isLoading && (
-        <div className="absolute inset-0 z-20 grid place-items-center bg-black/40 backdrop-blur-[1px]">
+        <div className="absolute inset-0 z-20 grid place-items-center bg-muted/60">
           <div className="flex flex-col items-center gap-2">
             <SpinnerRing />
-            <span className="text-xs text-white/80">Loading images…</span>
+            <span className="text-xs text-muted-foreground">Loading images…</span>
           </div>
         </div>
       )}
@@ -287,7 +287,7 @@ function CompareCanvas({
           alt="Left"
           decoding="async"
           loading="eager"
-          className="absolute inset-0 w-full h-full object-contain bg-black/30 pointer-events-none"
+          className="absolute inset-0 w-full h-full object-contain bg-muted/40 pointer-events-none"
           draggable={false}
           onLoad={onLeftLoad}                            // NEW
           onError={() => onLeftError("Left image failed to load")} // NEW
@@ -320,7 +320,7 @@ function CompareCanvas({
       {mode === "swipe" && !isPanning && (
         <>
           <div
-            className="absolute top-0 bottom-0 w-0.5 bg-white/80 pointer-events-none"
+            className="absolute top-0 bottom-0 w-0.5 bg-border pointer-events-none"
             style={{ left: `calc(${swipePct}% - 1px)` }}
           />
           <div
@@ -346,7 +346,7 @@ function CompareCanvas({
               }}
               className="relative h-full w-full bg-transparent focus:outline-none"
             >
-              <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-full bg-black/70 text-white text-xs flex items-center gap-1">
+              <div className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 px-2 py-1 rounded-full bg-muted text-muted-foreground text-xs flex items-center gap-1">
                 <MoveHorizontal className="h-4 w-4" />
                 {Math.round(swipePct)}%
               </div>
@@ -379,7 +379,7 @@ function CompareCanvas({
               className="pointer-events-none absolute top-0 left-0"
               style={{ left: cursor.x - 8, top: cursor.y - 8 }}
             >
-              <div className="size-4 rounded-full border border-white/80" />
+              <div className="size-4 rounded-full border border-border" />
             </div>
           )}
         </>
@@ -556,7 +556,7 @@ const ComparePage = () => {
 
   // ---------- UI ----------
   return (
-    <div className="min-h-screen space-gradient relative">
+  <div className="min-h-screen bg-background relative">
       {/* Top bar */}
       <header className="container mx-auto px-4 pt-6 pb-2">
         <div className="flex items-center justify-between">
@@ -568,7 +568,7 @@ const ComparePage = () => {
           </Link>
           <div className="hidden md:flex items-center gap-3">
             <SplitSquareVertical className="h-5 w-5 text-primary" />
-            <h1 className="text-xl font-semibold gradient-text">Compare</h1>
+            <h1 className="text-xl font-semibold">Compare</h1>
           </div>
         </div>
       </header>
@@ -579,27 +579,24 @@ const ComparePage = () => {
           {/* Sync + Region row */}
           <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
             <div className="flex items-center gap-3">
-              <label className="text-white/90 text-sm">Sync Left & Right</label>
-              <button
-                type="button"
+              <label className="text-muted-foreground text-sm">Sync Left & Right</label>
+              <Button
+                variant="outline"
                 onClick={() => setSync((s) => !s)}
-                className={clsx(
-                  "h-8 px-3 rounded-md border border-white/15",
-                  sync ? "bg-primary/40" : "bg-black/40"
-                )}
+                className={sync ? "bg-muted/30" : "bg-muted/40"}
               >
                 {sync ? "On" : "Off"}
-              </button>
+              </Button>
             </div>
 
             {/* Mobile-responsive region + fetch section */}
 <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
   <div className="flex items-center gap-3">
-    <span className="text-white/90 text-sm">Region</span>
+    <span className="text-muted-foreground text-sm">Region</span>
     <select
       value={regionId}
       onChange={(e) => setRegionId(e.target.value)}
-      className="bg-black/40 text-white rounded-md px-3 py-2 border border-white/15"
+      className="bg-muted/40 text-foreground rounded-md px-3 py-2 border border-border"
     >
       {REGIONS.map((r) => (
         <option key={r.id} value={r.id}>
@@ -646,16 +643,17 @@ const ComparePage = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="w-16 text-sm text-white/80">Layer</span>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                  <label className="w-16 text-sm text-muted-foreground" htmlFor="left-layer-select">Layer</label>
                   <select
+                    id="left-layer-select"
                     value={leftLayer}
                     onChange={(e) => {
                       setLeftLayer(e.target.value);
                       if (sync) setRightLayer(e.target.value);
                     }}
-                    className="bg-black/40 text-white rounded-md px-3 py-2 border border-white/15 flex-1"
+                    className="bg-muted/40 text-foreground rounded-md px-3 py-2 border border-border w-full sm:flex-1"
                   >
                     {LAYERS.map((l) => (
                       <option key={l.id} value={l.id}>
@@ -665,16 +663,18 @@ const ComparePage = () => {
                   </select>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-  <span className="w-16 text-sm text-white/80 shrink-0">Date</span>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+  <label className="w-16 text-sm text-muted-foreground shrink-0" htmlFor="left-date-input">Date</label>
+  <div className="flex flex-wrap items-center gap-2 w-full">
   <Input
     type="date"
+    id="left-date-input"
     value={leftDate}
     onChange={(e) => {
       setLeftDate(e.target.value);
       if (sync) setRightDate(e.target.value);
     }}
-    className="min-w-0 flex-[1_1_160px] [color-scheme:dark]" // allow shrinking, base width ~160px
+    className="min-w-0 flex-1 [color-scheme:dark]"
   />
   <div className="flex items-center gap-2 shrink-0">
     <Button
@@ -684,7 +684,7 @@ const ComparePage = () => {
         setLeftDate(nd);
         if (sync) setRightDate(nd);
       }}
-      className="px-3"
+      className="px-3 h-10"
     >
       −1d
     </Button>
@@ -695,10 +695,11 @@ const ComparePage = () => {
         setLeftDate(nd);
         if (sync) setRightDate(nd);
       }}
-      className="px-3"
+      className="px-3 h-10"
     >
       +1d
     </Button>
+  </div>
   </div>
 </div>
 
@@ -727,16 +728,17 @@ const ComparePage = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="w-16 text-sm text-white/80">Layer</span>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                  <label className="w-16 text-sm text-muted-foreground" htmlFor="right-layer-select">Layer</label>
                   <select
+                    id="right-layer-select"
                     value={rightLayer}
                     onChange={(e) => {
                       setRightLayer(e.target.value);
                       if (sync) setLeftLayer(e.target.value);
                     }}
-                    className="bg-black/40 text-white rounded-md px-3 py-2 border border-white/15 flex-1"
+                    className="bg-muted/40 text-foreground rounded-md px-3 py-2 border border-border w-full sm:flex-1"
                   >
                     {LAYERS.map((l) => (
                       <option key={l.id} value={l.id}>
@@ -746,24 +748,27 @@ const ComparePage = () => {
                   </select>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-  <span className="w-16 text-sm text-white/80 shrink-0">Date</span>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+  <label className="w-16 text-sm text-muted-foreground shrink-0" htmlFor="right-date-input">Date</label>
+  <div className="flex flex-wrap items-center gap-2 w-full">
   <Input
     type="date"
+    id="right-date-input"
     value={rightDate}
     onChange={(e) => {
       setRightDate(e.target.value);
       if (sync) setLeftDate(e.target.value);
     }}
-    className="min-w-0 flex-[1_1_160px] [color-scheme:dark]"
+    className="min-w-0 flex-1 [color-scheme:dark]"
   />
   <div className="flex items-center gap-2 shrink-0">
-    <Button variant="outline" onClick={() => setRightDate(shiftDate(rightDate, -1))} className="px-3">
+    <Button variant="outline" onClick={() => setRightDate(shiftDate(rightDate, -1))} className="px-3 h-10">
       −1d
     </Button>
-    <Button variant="outline" onClick={() => setRightDate(shiftDate(rightDate, +1))} className="px-3">
+    <Button variant="outline" onClick={() => setRightDate(shiftDate(rightDate, +1))} className="px-3 h-10">
       +1d
     </Button>
+  </div>
   </div>
 </div>
         
@@ -791,7 +796,7 @@ const ComparePage = () => {
 
   </div>
   {/* Optional helper text */}
-  <p className="text-center text-xs text-white/70">
+  <p className="text-center text-xs text-muted-foreground">
     Make selections above, then Fetch to load images from NASA Worldview.
   </p>
 </div>
@@ -799,15 +804,15 @@ const ComparePage = () => {
           {/* Mode + controls */}
           <div className="flex flex-col md:flex-row md:items-center gap-3">
             <div className="flex items-center gap-2">
-              <Rows3 className="h-5 w-5 text-white/80" />
-              <span className="text-sm md:text-base text-white/90">Mode</span>
+              <Rows3 className="h-5 w-5 text-muted-foreground" />
+              <span className="text-sm md:text-base text-muted-foreground">Mode</span>
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 className={clsx(
-                  "px-3 py-2 text-sm rounded-lg border border-white/15 bg-black/40 hover:bg-black/50",
-                  mode === "swipe" && "bg-primary/30"
+                  "px-4 py-2.5 md:px-3 md:py-2 text-sm rounded-lg border border-border bg-muted/40 hover:bg-muted/50 text-foreground",
+                  mode === "swipe" && "bg-border"
                 )}
                 onClick={() => setMode("swipe")}
               >
@@ -815,8 +820,8 @@ const ComparePage = () => {
               </button>
               <button
                 className={clsx(
-                  "px-3 py-2 text-sm rounded-lg border border-white/15 bg-black/40 hover:bg-black/50",
-                  mode === "opacity" && "bg-primary/30"
+                  "px-4 py-2.5 md:px-3 md:py-2 text-sm rounded-lg border border-border bg-muted/40 hover:bg-muted/50 text-foreground",
+                  mode === "opacity" && "bg-border"
                 )}
                 onClick={() => setMode("opacity")}
               >
@@ -824,8 +829,8 @@ const ComparePage = () => {
               </button>
               <button
                 className={clsx(
-                  "px-3 py-2 text-sm rounded-lg border border-white/15 bg-black/40 hover:bg-black/50",
-                  mode === "spyglass" && "bg-primary/30"
+                  "px-4 py-2.5 md:px-3 md:py-2 text-sm rounded-lg border border-border bg-muted/40 hover:bg-muted/50 text-foreground",
+                  mode === "spyglass" && "bg-border"
                 )}
                 onClick={() => setMode("spyglass")}
               >
@@ -842,7 +847,7 @@ const ComparePage = () => {
         <main className="container mx-auto px-4 mt-4">
         <div className="relative">
             {/* Viewer Controls */}
-            <div className="absolute top-3 right-3 z-20 flex gap-2">
+            <div className="absolute top-3 right-3 z-20 flex flex-wrap justify-end gap-2">
               <Button
                   variant="secondary"
                   size="icon"
@@ -850,7 +855,7 @@ const ComparePage = () => {
                   onClick={handleZoomOut}
                   disabled={zoom <= 1}
               >
-                  <ZoomOut className="h-4 w-4" />
+                  <ZoomOut className="h-5 w-5 md:h-4 md:w-4" />
               </Button>
               <Button
                   variant="secondary"
@@ -859,7 +864,7 @@ const ComparePage = () => {
                   onClick={handleZoomIn}
                   disabled={zoom >= 8}
               >
-                  <ZoomIn className="h-4 w-4" />
+                  <ZoomIn className="h-5 w-5 md:h-4 md:w-4" />
               </Button>
               <Button
                   variant="secondary"
@@ -868,7 +873,7 @@ const ComparePage = () => {
                   onClick={handleResetView}
                   disabled={zoom <= 1 && pan.x === 0 && pan.y === 0}
               >
-                  <RotateCcw className="h-4 w-4" />
+                  <RotateCcw className="h-5 w-5 md:h-4 md:w-4" />
               </Button>
               <Button
                   variant="secondary"
@@ -876,7 +881,7 @@ const ComparePage = () => {
                   aria-label="Enter fullscreen"
                   onClick={() => setIsFullscreen(true)}
               >
-                  <Maximize2 className="h-4 w-4" />
+                  <Maximize2 className="h-5 w-5 md:h-4 md:w-4" />
               </Button>
             </div>
 
@@ -904,7 +909,7 @@ const ComparePage = () => {
 
       {/* Status + messages */}
       <section className="container mx-auto px-4 mt-4 pb-10">
-        <div className="glass-panel rounded-lg p-3 text-sm text-white/90 flex flex-col gap-2">
+  <div className="glass-panel rounded-lg p-3 text-sm text-muted-foreground flex flex-col gap-2">
           <div className="flex flex-wrap gap-3">
             <span>Left: {leftLayer} • {leftDate}</span>
             <span>Zoom: {zoom.toFixed(1)}x</span>
@@ -912,13 +917,13 @@ const ComparePage = () => {
             <span>Region: {customBbox.trim() || currentRegion.label} ({customBbox.trim() ? customBbox : currentRegion.bbox})</span>
           </div>
           {(left.loading || right.loading) && (
-            <div className="text-white/70">Loading snapshots…</div>
+            <div className="text-muted-foreground">Loading snapshots…</div>
           )}
           {(left.error || right.error) && (
             <div className="text-red-300">Couldn’t load one or both images. Try another date or layer.</div>
           )}
           {!left.url && !right.url && !left.loading && !right.loading && (
-            <div className="text-white/70 flex items-center gap-2">
+            <div className="text-muted-foreground flex items-center gap-2">
               <Info className="h-4 w-4" />
               Tip: Start with True Color today vs yesterday, then try Night Lights for the same area at night.
             </div>
@@ -928,10 +933,10 @@ const ComparePage = () => {
 
       {/* Fullscreen overlay */}
 {isFullscreen && (
-  <div className="fixed inset-0 z-[100] bg-black">
+  <div className="fixed inset-0 z-[100] bg-background">
     {/* Top bar with close */}
     <div className="flex items-center justify-between px-4 py-3">
-      <h2 className="text-white/90 text-sm">Fullscreen Compare</h2>
+      <h2 className="text-foreground text-sm">Fullscreen Compare</h2>
       <div className="flex items-center gap-2">
         <Button
             variant="secondary"
@@ -969,25 +974,25 @@ const ComparePage = () => {
     <div className="px-4">
       <div className="glass-panel rounded-xl p-3 flex flex-col md:flex-row md:items-center gap-3">
         <div className="flex items-center gap-2">
-          <Rows3 className="h-5 w-5 text-white/80" />
-          <span className="text-sm md:text-base text-white/90">Mode</span>
+          <Rows3 className="h-5 w-5 text-muted-foreground" />
+          <span className="text-sm md:text-base text-muted-foreground">Mode</span>
         </div>
 
         <div className="flex items-center gap-2">
           <button
-            className={`px-3 py-2 text-sm rounded-lg border border-white/15 bg-black/40 hover:bg-black/50 ${mode === "swipe" ? "bg-primary/30" : ""}`}
+            className={`px-3 py-2 text-sm rounded-lg border border-border bg-muted/40 hover:bg-muted/50 text-foreground ${mode === "swipe" ? "bg-border" : ""}`}
             onClick={() => setMode("swipe")}
           >
             Swipe
           </button>
           <button
-            className={`px-3 py-2 text-sm rounded-lg border border-white/15 bg-black/40 hover:bg-black/50 ${mode === "opacity" ? "bg-primary/30" : ""}`}
+            className={`px-3 py-2 text-sm rounded-lg border border-border bg-muted/40 hover:bg-muted/50 text-foreground ${mode === "opacity" ? "bg-border" : ""}`}
             onClick={() => setMode("opacity")}
           >
             Opacity
           </button>
           <button
-            className={`px-3 py-2 text-sm rounded-lg border border-white/15 bg-black/40 hover:bg-black/50 ${mode === "spyglass" ? "bg-primary/30" : ""}`}
+            className={`px-3 py-2 text-sm rounded-lg border border-border bg-muted/40 hover:bg-muted/50 text-foreground ${mode === "spyglass" ? "bg-border" : ""}`}
             onClick={() => setMode("spyglass")}
           >
             Spyglass

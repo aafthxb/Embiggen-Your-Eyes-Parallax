@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface NasaImage {
   id: string;
@@ -15,6 +16,7 @@ interface NasaImage {
 }
 
 const SpaceGallery = () => {
+
   const [query, setQuery] = useState("galaxy");
   const [searchTerm, setSearchTerm] = useState("galaxy");
   const [images, setImages] = useState<NasaImage[]>([]);
@@ -114,6 +116,36 @@ const SpaceGallery = () => {
       // slight delay to ensure element is focusable
       setTimeout(() => modalRef.current?.focus(), 50);
     }
+  }, [selectedImage]);
+
+  // focus trapping for modal accessibility
+  useEffect(() => {
+    if (!selectedImage || !modalRef.current) return;
+
+    const focusableElements = modalRef.current.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    const handleTabKeyPress = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+
+      if (e.shiftKey) { // Shift + Tab
+        if (document.activeElement === firstElement) {
+          lastElement.focus();
+          e.preventDefault();
+        }
+      } else { // Tab
+        if (document.activeElement === lastElement) {
+          firstElement.focus();
+          e.preventDefault();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleTabKeyPress);
+    return () => window.removeEventListener('keydown', handleTabKeyPress);
   }, [selectedImage]);
 
   // Touch handlers for pinch-to-zoom and pan
@@ -263,15 +295,15 @@ const SpaceGallery = () => {
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 placeholder="Search e.g., 'Mars rover' or 'nebula'"
-                className="pl-10 bg-background/20 border-primary/30 focus:ring-primary"
+                className="pl-10 h-12 sm:h-10 bg-background/20 border-primary/30 focus:ring-primary"
               />
               {query && (
-                <Button variant="ghost" size="icon" onClick={() => setQuery("")} className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7">
+                <Button variant="ghost" size="icon" onClick={() => setQuery("")} className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 sm:h-7 sm:w-7">
                   <X className="h-4 w-4" />
                 </Button>
               )}
             </div>
-            <Button onClick={handleSearch} disabled={loading}>
+            <Button onClick={handleSearch} disabled={loading} className="h-12 sm:h-10">
               {loading ? "Exploring..." : "Explore"}
             </Button>
           </div>
@@ -279,28 +311,37 @@ const SpaceGallery = () => {
 
         {/* Gallery Grid */}
         <main className="container mx-auto px-4 pb-16">
-          {loading && <p className="text-center text-lg text-muted-foreground">Loading images for "{searchTerm}"...</p>}
           {error && <p className="text-center text-red-400">{error}</p>}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {images.map((image) => (
-              <Card
-                key={image.id}
-                onClick={() => handleImageSelect(image)}
-                onKeyDown={(e) => e.key === 'Enter' && handleImageSelect(image)}
-                tabIndex={0}
-                role="button"
-                className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-xl overflow-hidden group glass-panel"
-              >
-                <img
-                  src={image.lowQuality}
-                  alt={image.title}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                />
-              </Card>
-            ))}
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {[...Array(10)].map((_, i) => (
+                <div key={i} className="glass-panel rounded-lg overflow-hidden">
+                  <Skeleton className="w-full h-48" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {images.map((image) => (
+                <Card
+                  key={image.id}
+                  onClick={() => handleImageSelect(image)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleImageSelect(image)}
+                  tabIndex={0}
+                  role="button"
+                  className="cursor-pointer transition-all hover:scale-[1.02] hover:shadow-xl overflow-hidden group glass-panel"
+                >
+                  <img
+                    src={image.lowQuality}
+                    alt={image.title}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                </Card>
+              ))}
+            </div>
+          )}
 
           {!loading && images.length === 0 && (
             <div className="text-center py-16">
@@ -319,7 +360,9 @@ const SpaceGallery = () => {
           tabIndex={-1}
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          aria-labelledby="modal-title"
+          aria-describedby="modal-description"
+          className="fixed inset-0 z-50 bg-muted/90 flex items-center justify-center"
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
           onTouchStart={handleTouchStart}
@@ -328,42 +371,46 @@ const SpaceGallery = () => {
         >
           <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-white line-clamp-1">{selectedImage.title}</h2>
-              <p className="text-sm text-white/70 mt-1">
+              <h2 id="modal-title" className="text-2xl font-bold text-foreground line-clamp-1">{selectedImage.title}</h2>
+              <p className="text-sm text-muted-foreground mt-1">
                 Zoom: {zoom.toFixed(1)}x • Quality: {getQuality()}
               </p>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-1 sm:gap-2">
               <Button
                 onClick={handleZoomOut}
                 disabled={zoom <= 1}
                 variant="secondary"
                 size="icon"
+                aria-label="Zoom out"
               >
-                <ZoomOut className="h-5 w-5" />
+                <ZoomOut className="h-6 w-6 sm:h-5 sm:w-5" />
               </Button>
               <Button
                 onClick={handleZoomIn}
                 disabled={zoom >= 5}
                 variant="secondary"
                 size="icon"
+                aria-label="Zoom in"
               >
-                <ZoomIn className="h-5 w-5" />
+                <ZoomIn className="h-6 w-6 sm:h-5 sm:w-5" />
               </Button>
               <Button
                 onClick={handleReset}
                 variant="secondary"
                 size="icon"
+                aria-label="Reset view"
               >
-                <RotateCcw className="h-5 w-5" />
+                <RotateCcw className="h-6 w-6 sm:h-5 sm:w-5" />
               </Button>
               <Button
                 onClick={handleCloseViewer}
                 variant="secondary"
                 size="icon"
+                aria-label="Close image viewer"
               >
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6 sm:h-5 sm:w-5" />
               </Button>
             </div>
           </div>
@@ -394,7 +441,7 @@ const SpaceGallery = () => {
 
           {zoom === 1 && pan.x === 0 && pan.y === 0 && (
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 glass-panel px-4 py-2 rounded-lg">
-              <p className="text-sm flex items-center gap-2 text-white">
+              <p className="text-sm flex items-center gap-2 text-foreground">
                 <Info className="h-4 w-4" />
                 Use zoom buttons to see higher quality • Drag to pan when zoomed
               </p>
@@ -402,7 +449,7 @@ const SpaceGallery = () => {
           )}
 
           <div className="absolute bottom-4 left-4 right-4 glass-panel p-4 rounded-lg">
-            <p className="text-sm text-white/90 line-clamp-2">{selectedImage.description}</p>
+            <p id="modal-description" className="text-sm text-muted-foreground line-clamp-2">{selectedImage.description}</p>
           </div>
         </div>
       )}
