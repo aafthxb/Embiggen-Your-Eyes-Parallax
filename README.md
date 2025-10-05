@@ -13,6 +13,7 @@ Parallax is packed with features designed to make NASA's rich datasets accessibl
 * **🌍 Earth Comparison:** Compare satellite images of Earth from two different points in time, side-by-side.
 * **🖼️ Space Gallery:** Explore a comprehensive gallery of images from NASA's database, all in one place.
 * **🟠 Celestial Bodies:** Explore the 2d maps of some of the popular celestial bodies in space.
+* **🔍 Deep Zoom:** Zoom into a single, ultra-high-resolution image, revealing cosmic details with breathtaking clarity.
 
 ## 🛠️ Getting Started: Running Locally
 To get a local copy up and running, follow these simple steps.
@@ -47,6 +48,7 @@ Voila! The website is now running locally on your PC.
 This project is a submission for the NASA Space Apps Hackathon 2025, created for the "Embiggen Your Eyes" challenge.
 
 Please note: As this project relies on live data from NASA's APIs, some features might take a moment to load, and there may be occasional issues if the databases are temporarily unavailable.
+
 
 
 
